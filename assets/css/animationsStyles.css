@@ -1,0 +1,16 @@
+/* Principio Banner */
+
+@keyframes banner {
+    from { transform: translatex(-100%); }
+    to { transform: translatex(250%); }
+}
+
+.banner-container h1 {
+    animation: banner 10s linear infinite;
+}
+
+.banner-container:hover h1 {
+    animation-play-state: paused;
+}
+
+/* Principio Banner */
