@@ -119,11 +119,16 @@ body {
     width: 90%;
     height: 10vh;
     margin: 0 0 1% 0;
-    border: 10px solid #fff;
+    position: relative;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: flex-start;
     align-items: center;
+}
+
+.player {
+    position: absolute;
+    bottom: 0;
 }
 
 .player img {

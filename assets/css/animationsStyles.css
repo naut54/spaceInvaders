@@ -1,4 +1,4 @@
-/* Principio Banner */
+/* Inicio Banner */
 
 @keyframes banner {
     from { transform: translatex(-100%); }
@@ -13,4 +13,15 @@
     animation-play-state: paused;
 }
 
-/* Principio Banner */
+/* Fin Banner */
+
+
+/* Inicio Disparo */
+
+.shot {
+    position: absolute;
+    z-index: 100;
+    background-color: red;
+}
+
+/* Fin Disparo */
