@@ -1,3 +1,5 @@
+import { gameState } from '../gameState.js';
+
 class Player {
     constructor() {
         this.element = document.getElementById("player");
@@ -58,6 +60,7 @@ class Player {
             bullet.style.bottom = `${newBottom}px`;
 
             const targets = document.querySelectorAll('.shell');
+            const octopus = document.querySelector('.octopus');
 
             if (newBottom > gameContainer.offsetHeight - 50) {
                 bullet.remove();
@@ -70,6 +73,13 @@ class Player {
                     collision = true;
                     bullet.remove();
                     target.remove();
+                    score(1);
+                }
+                if (checkCollision(bullet, octopus)) {
+                    collision = true;
+                    bullet.remove();
+                    octopus.remove();
+                    score(2);
                 }
             });
 
@@ -80,6 +90,8 @@ class Player {
 
         requestAnimationFrame(moveBullet);
     }
+
+    // Nota: Limitar cadencia disparos y disparar en movimiento
 
     setupControls() {
         document.addEventListener('keydown', (event) => {
@@ -103,6 +115,21 @@ function checkCollision(elementOne, elementTwo) {
     const rectTwo = elementTwo.getBoundingClientRect();
 
     return !(rectOne.right < rectTwo.left || rectOne.left > rectTwo.right || rectOne.bottom < rectTwo.top || rectOne.top > rectTwo.bottom);
+}
+
+function score(type) {
+    const scoreElement = document.querySelector('#score');
+    const scoreNum = parseInt(scoreElement.innerHTML);
+    switch (type) {
+        case 1:
+            scoreElement.innerHTML = (scoreNum).toString();
+            break;
+        case 2:
+            scoreElement.innerHTML = (scoreNum + 100).toString();
+            break;
+        default:
+            break;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
