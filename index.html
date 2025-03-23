@@ -11,7 +11,9 @@
       <link href="assets/css/animationsStyles.css" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
       <script type="module" src="assets/js/entities/Player.js"></script>
-      <script type="module" src="assets/js/entities/Octopus.js"></script>
+<!--      <script type="module" src="assets/js/entities/Octopus.js"></script>-->
+      <script type="module" src="assets/js/entities/OctopusPool.js"></script>
+      <script type="module" src="assets/js/game/Game.js"></script>
   </head>
   <body>
         <div class="main-container">
@@ -67,5 +69,67 @@
                 </a>
             </h1>
         </div>
+        <script type="module">
+            import { OctopusPool } from './assets/js/entities/OctopusPool.js';
+            import { Player } from './assets/js/entities/Player.js';
+
+            document.addEventListener('DOMContentLoaded', () => {
+                let currentLevel = 1;
+                let activeOctopuses = 0;
+
+                const octopusPool = new OctopusPool('.invaders-container', 4);
+
+                const player = new Player();
+
+                function startLevel(level) {
+                    document.getElementById('level').textContent = level;
+                    activeOctopuses = 0;
+
+                    const containers = document.querySelectorAll('.invaders-container');
+
+                    for (let containerIndex = 0; containerIndex < containers.length; containerIndex++) {
+                        const container = containers[containerIndex];
+                        const containerWidth = container.offsetWidth;
+                        const spacing = containerWidth / 5;
+
+                        for (let i = 0; i < 4; i++) {
+                            const octopus = octopusPool.getOctopus(containerIndex);
+                            if (octopus) {
+                                octopus.activate(spacing * (i + 1), 30 + (40 * containerIndex));
+                                octopus.velocity = 0.5 + (level * 0.1);
+                                octopus.onDestroy = () => {
+                                    activeOctopuses--;
+                                    if (activeOctopuses <= 0) {
+                                        setTimeout(() => {
+                                            currentLevel++;
+                                            startLevel(currentLevel);
+                                        }, 1500);
+                                    }
+                                };
+                                activeOctopuses++;
+                            }
+                        }
+                    }
+                }
+
+                function gameLoop() {
+                    const containers = document.querySelectorAll('.invaders-container');
+                    for (let i = 0; i < containers.length; i++) {
+                        const containerPool = octopusPool.pool[i] || [];
+                        for (const octopus of containerPool) {
+                            if (octopus.active) {
+                                octopus.autoMove();
+                            }
+                        }
+                    }
+
+                    requestAnimationFrame(gameLoop);
+                }
+
+                startLevel(currentLevel);
+                gameLoop();
+            });
+        </script>
+
   </body>
 </html>

@@ -1,13 +1,16 @@
-class OctopusPool {
+import { Octopus } from './Octopus.js';
+
+export class OctopusPool {
     constructor(containerSelector, poolSize = 10) {
         this.pool = [];
-        this.container = document.querySelector(containerSelector);
+        this.containerSelector = containerSelector;
         this.poolSize = poolSize;
         this.initializePool();
     }
 
     initializePool() {
-        this.container.forEach(container => {
+        const containers = document.querySelectorAll(this.containerSelector);
+        containers.forEach(container => {
             const containerPool = [];
             for (let i = 0; i < this.poolSize; i++) {
                 const octopus = new Octopus();
@@ -27,8 +30,7 @@ class OctopusPool {
         const containerPool = this.pool[containerIndex];
 
         for (const octopus of containerPool) {
-            if (octopus.element.style.display === 'none') {
-                octopus.element.style.display = 'block';
+            if (!octopus.active) {
                 return octopus;
             }
         }
@@ -38,5 +40,6 @@ class OctopusPool {
 
     releaseOctopus(octopus) {
         octopus.element.style.display = 'none';
+        octopus.active = false;
     }
 }

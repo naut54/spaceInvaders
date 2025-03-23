@@ -1,6 +1,4 @@
-import { gameState } from '../gameState.js';
-
-class Octopus {
+export class Octopus {
     constructor() {
         this.element = document.createElement('div');
         this.element.classList.add('octopus');
@@ -22,6 +20,7 @@ class Octopus {
         this.gameWidth = 800;
         this.gameHeight = 600;
         this.active = false;
+        this.onDestroy = null;
 
         this.movingRight = true;
         this.horizontalLimit = 0.05;
@@ -41,14 +40,15 @@ class Octopus {
         this.maxTravel = this.gameWidth * this.horizontalLimit;
     }
 
-    remove() {
-        if (this.element && this.element.parentNode) {
-            this.element.parentNode.removeChild(this.element);
+    destroy() {
+        if (this.active) {
+            this.active = false;
+            this.element.style.display = 'none';
+
+            if (typeof this.onDestroy === 'function') {
+                this.onDestroy();
+            }
         }
-
-        this.active = false;
-
-        this.element = null;
     }
 
     updatePosition() {
@@ -76,21 +76,3 @@ class Octopus {
         this.updatePosition();
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const gameContainer = document.querySelector('.invaders-container');
-    const octopus = new Octopus();
-
-    gameContainer.appendChild(octopus.element);
-
-    octopus.gameWidth = gameContainer.offsetWidth;
-    octopus.gameHeight = gameContainer.offsetHeight;
-
-    octopus.activate(gameContainer.offsetWidth / 2, gameContainer.offsetHeight - 100);
-
-    function gameLoop() {
-        octopus.autoMove();
-        requestAnimationFrame(gameLoop);
-    }
-    gameLoop();
-});

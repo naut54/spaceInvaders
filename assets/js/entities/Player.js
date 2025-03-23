@@ -1,6 +1,6 @@
 import { gameState } from '../gameState.js';
 
-class Player {
+export class Player {
     constructor() {
         this.element = document.getElementById("player");
         this.position = {
@@ -60,7 +60,8 @@ class Player {
             bullet.style.bottom = `${newBottom}px`;
 
             const targets = document.querySelectorAll('.shell');
-            const octopus = document.querySelector('.octopus');
+
+            const octopuses = document.querySelectorAll('.octopus');
 
             if (newBottom > gameContainer.offsetHeight - 50) {
                 bullet.remove();
@@ -68,6 +69,7 @@ class Player {
             }
 
             let collision = false;
+
             targets.forEach(target => {
                 if (checkCollision(bullet, target)) {
                     collision = true;
@@ -75,10 +77,20 @@ class Player {
                     target.remove();
                     score(1);
                 }
-                if (checkCollision(bullet, octopus)) {
+            });
+
+            octopuses.forEach(octopus => {
+                if (octopus.style.display !== 'none' && checkCollision(bullet, octopus)) {
                     collision = true;
                     bullet.remove();
-                    octopus.remove();
+
+                    octopus.style.display = 'none';
+
+                    const event = new CustomEvent('octopus-destroyed', {
+                        detail: { octopusElement: octopus }
+                    });
+                    document.dispatchEvent(event);
+
                     score(2);
                 }
             });
@@ -90,8 +102,6 @@ class Player {
 
         requestAnimationFrame(moveBullet);
     }
-
-    // Nota: Limitar cadencia disparos y disparar en movimiento
 
     setupControls() {
         document.addEventListener('keydown', (event) => {
@@ -117,7 +127,12 @@ function checkCollision(elementOne, elementTwo) {
     return !(rectOne.right < rectTwo.left || rectOne.left > rectTwo.right || rectOne.bottom < rectTwo.top || rectOne.top > rectTwo.bottom);
 }
 
+function checkIsAlive() {
+    return gameState.isAlive;
+}
+
 function score(type) {
+    if (!checkIsAlive()) return;
     const scoreElement = document.querySelector('#score');
     const scoreNum = parseInt(scoreElement.innerHTML);
     switch (type) {
@@ -126,6 +141,8 @@ function score(type) {
             break;
         case 2:
             scoreElement.innerHTML = (scoreNum + 100).toString();
+            gameState.isAlive = false;
+            console.log('Game Over');
             break;
         default:
             break;
