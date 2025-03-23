@@ -15,7 +15,7 @@ export class Octopus {
             x: 0,
             y: 0
         };
-        this.velocity = 0.5;
+        this.velocity = 0;
 
         this.gameWidth = 800;
         this.gameHeight = 600;
@@ -24,7 +24,7 @@ export class Octopus {
 
         this.movingRight = true;
         this.horizontalLimit = 0.05;
-        this.verticalStep = 0.05;
+        this.verticalStep = 0.01;
         this.startX = 0;
         this.maxTravel = 0;
     }

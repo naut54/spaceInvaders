@@ -54,36 +54,35 @@ export class Player {
         bullet.style.border = '1px solid yellow';
 
         const moveBullet = () => {
+            if (!bullet.isConnected) {
+                return;
+            }
+
             const gameContainer = document.querySelector('.game-container');
             const currentBottom = parseFloat(getComputedStyle(bullet).bottom || '80');
             const newBottom = currentBottom + 5;
             bullet.style.bottom = `${newBottom}px`;
-
-            const targets = document.querySelectorAll('.shell');
-
-            const octopuses = document.querySelectorAll('.octopus');
 
             if (newBottom > gameContainer.offsetHeight - 50) {
                 bullet.remove();
                 return;
             }
 
-            let collision = false;
+            const currentTargets = document.querySelectorAll('.shell');
+            const currentOctopuses = document.querySelectorAll('.octopus:not([style*="display: none"])');
 
-            targets.forEach(target => {
+            for (const target of currentTargets) {
                 if (checkCollision(bullet, target)) {
-                    collision = true;
                     bullet.remove();
                     target.remove();
                     score(1);
+                    return;
                 }
-            });
+            }
 
-            octopuses.forEach(octopus => {
-                if (octopus.style.display !== 'none' && checkCollision(bullet, octopus)) {
-                    collision = true;
+            for (const octopus of currentOctopuses) {
+                if (checkCollision(bullet, octopus)) {
                     bullet.remove();
-
                     octopus.style.display = 'none';
 
                     const event = new CustomEvent('octopus-destroyed', {
@@ -92,10 +91,11 @@ export class Player {
                     document.dispatchEvent(event);
 
                     score(2);
-                }
-            });
 
-            if (collision) return;
+                    console.log('score');
+                    break;
+                }
+            }
 
             requestAnimationFrame(moveBullet);
         };

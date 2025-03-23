@@ -1,6 +1,5 @@
-import { Octopus } from '../entities/Octopus.js';
-import { OctopusPool } from '../entities/OctopusPool.js';
-import { Player } from '../entities/Player.js';
+import {OctopusPool} from '../entities/OctopusPool.js';
+import {Player} from '../entities/Player.js';
 
 export class Game {
     constructor() {
@@ -33,14 +32,13 @@ export class Game {
     }
 
     init() {
-        this.octopusPool = new OctopusPool('.invaders-container', 4);
+        this.octopusPool = new OctopusPool('.invaders-container', 6);
 
         this.player = new Player();
 
         this.levelElement.textContent = this.currentLevel;
 
-        const highScore = localStorage.getItem('highScore') || 0;
-        this.highScoreElement.textContent = highScore;
+        this.highScoreElement.textContent = localStorage.getItem('highScore') || 0;
 
         this.startLevel(this.currentLevel);
 
@@ -58,13 +56,13 @@ export class Game {
             const container = containers[containerIndex];
             const containerWidth = container.offsetWidth;
 
-            const spacing = containerWidth / 5;
+            const spacing = containerWidth / 6;
 
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 6; i++) {
                 const octopus = this.octopusPool.getOctopus(containerIndex);
                 if (octopus) {
-                    const posX = spacing * (i + 1);
-                    const posY = 30 + (40 * containerIndex);
+                    const posX = spacing * (i + 2);
+                    const posY = 40 + (150 * containerIndex);
                     this.octopusInstances.set(octopus.element, octopus);
 
                     const originalOnDestroy = octopus.onDestroy;
@@ -77,7 +75,8 @@ export class Game {
 
                     octopus.activate(posX, posY);
 
-                    octopus.velocity = 0.5 + (level * 0.1);
+                    //octopus.velocity = 0.05 + (level * 0.1);
+                    octopus.velocity = 0.0;
 
                     octopus.onDestroy = () => {
                         this.activeOctopuses--;
