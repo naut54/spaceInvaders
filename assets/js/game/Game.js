@@ -34,8 +34,6 @@ export class Game {
     init() {
         this.octopusPool = new OctopusPool('.invaders-container', 6);
 
-        this.player = new Player();
-
         this.levelElement.textContent = this.currentLevel;
 
         this.highScoreElement.textContent = localStorage.getItem('highScore') || 0;
@@ -102,7 +100,6 @@ export class Game {
             for (const octopus of containerPool) {
                 if (octopus.active) {
                     octopus.autoMove();
-
                 }
             }
         }
@@ -111,7 +108,3 @@ export class Game {
     }
 
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const game = new Game();
-});

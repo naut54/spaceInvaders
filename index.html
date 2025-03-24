@@ -10,10 +10,6 @@
       <link href="assets/css/mainStyles.css" rel="stylesheet">
       <link href="assets/css/animationsStyles.css" rel="stylesheet">
       <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-      <script type="module" src="assets/js/entities/Player.js"></script>
-<!--      <script type="module" src="assets/js/entities/Octopus.js"></script>-->
-      <script type="module" src="assets/js/entities/OctopusPool.js"></script>
-      <script type="module" src="assets/js/game/Game.js"></script>
   </head>
   <body>
         <div class="main-container">
@@ -70,6 +66,8 @@
             </h1>
         </div>
         <script type="module">
+            import { Game } from './assets/js/game/Game.js';
+
             document.addEventListener('DOMContentLoaded', () => {
                 const game = new Game();
             });

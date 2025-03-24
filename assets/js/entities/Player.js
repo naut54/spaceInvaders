@@ -1,5 +1,3 @@
-import { gameState } from '../gameState.js';
-
 export class Player {
     constructor() {
         this.element = document.getElementById("player");
@@ -55,6 +53,7 @@ export class Player {
 
         const moveBullet = () => {
             if (!bullet.isConnected) {
+                console.log('Bullet disconnected');
                 return;
             }
 
@@ -69,32 +68,31 @@ export class Player {
             }
 
             const currentTargets = document.querySelectorAll('.shell');
-            const currentOctopuses = document.querySelectorAll('.octopus:not([style*="display: none"])');
+            const hitTarget = Array.from(currentTargets).find(target => checkCollision(bullet, target));
 
-            for (const target of currentTargets) {
-                if (checkCollision(bullet, target)) {
-                    bullet.remove();
-                    target.remove();
-                    score(1);
-                    return;
-                }
+            if (hitTarget) {
+                bullet.remove();
+                hitTarget.remove();
+                score(2);
+                return;
             }
 
-            for (const octopus of currentOctopuses) {
-                if (checkCollision(bullet, octopus)) {
-                    bullet.remove();
-                    octopus.style.display = 'none';
+            const currentOctopuses = document.querySelectorAll('.octopus:not([style*="display: none"])');
+            const hitOctopus = Array.from(currentOctopuses).find(octopus => checkCollision(bullet, octopus));
 
-                    const event = new CustomEvent('octopus-destroyed', {
-                        detail: { octopusElement: octopus }
-                    });
-                    document.dispatchEvent(event);
+            if (hitOctopus) {
+                bullet.remove();
+                hitOctopus.style.display = 'none';
 
-                    score(2);
+                const event = new CustomEvent('octopus-destroyed', {
+                    detail: {
+                        octopusElement: hitOctopus
+                    }
+                });
+                document.dispatchEvent(event);
 
-                    console.log('score');
-                    break;
-                }
+                score(2);
+                return;
             }
 
             requestAnimationFrame(moveBullet);
@@ -127,12 +125,7 @@ function checkCollision(elementOne, elementTwo) {
     return !(rectOne.right < rectTwo.left || rectOne.left > rectTwo.right || rectOne.bottom < rectTwo.top || rectOne.top > rectTwo.bottom);
 }
 
-function checkIsAlive() {
-    return gameState.isAlive;
-}
-
 function score(type) {
-    if (!checkIsAlive()) return;
     const scoreElement = document.querySelector('#score');
     const scoreNum = parseInt(scoreElement.innerHTML);
     switch (type) {
@@ -141,14 +134,8 @@ function score(type) {
             break;
         case 2:
             scoreElement.innerHTML = (scoreNum + 100).toString();
-            gameState.isAlive = false;
-            console.log('Game Over');
             break;
         default:
             break;
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const player = new Player();
-});
