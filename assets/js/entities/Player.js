@@ -36,6 +36,22 @@ export class Player {
         this.updatePosition();
     }
 
+    setupControls() {
+        document.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case 'ArrowLeft':
+                    this.moveLeft();
+                    break;
+                case 'ArrowRight':
+                    this.moveRight();
+                    break;
+                case ' ':
+                    this.shoot();
+                    break;
+            }
+        });
+    }
+
     shoot() {
         let bullet = document.createElement('div');
         bullet.classList.add('shot');
@@ -99,22 +115,6 @@ export class Player {
         };
 
         requestAnimationFrame(moveBullet);
-    }
-
-    setupControls() {
-        document.addEventListener('keydown', (event) => {
-            switch (event.key) {
-                case 'ArrowLeft':
-                    this.moveLeft();
-                    break;
-                case 'ArrowRight':
-                    this.moveRight();
-                    break;
-                case ' ':
-                    this.shoot();
-                    break;
-            }
-        });
     }
 }
 
