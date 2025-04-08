@@ -138,4 +138,17 @@ function score(type) {
         default:
             break;
     }
+
+    this.scoreElement = document.getElementById('score');
+    this.highScoreElement = document.getElementById('high-score');
+
+    const highScore = parseInt(this.highScoreElement.textContent);
+    console.log(highScore);
+    const currentScore = parseInt(this.scoreElement.textContent);
+    console.log(currentScore);
+
+    if (currentScore > highScore || currentScore === 0) {
+        localStorage.setItem('highScore', currentScore.toString())
+        this.highScoreElement.textContent = currentScore.toString();
+    }
 }

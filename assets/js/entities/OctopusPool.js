@@ -47,9 +47,4 @@ export class OctopusPool {
 
         return null;
     }
-
-    releaseOctopus(octopus) {
-        octopus.element.style.display = 'none';
-        octopus.active = false;
-    }
 }
