@@ -23,7 +23,7 @@ export class Octopus {
         this.onDestroy = null;
 
         this.movingRight = true;
-        this.horizontalLimit = 0.05;
+        this.horizontalLimit = 0.08;
         this.verticalStep = 0.01;
         this.startX = 0;
         this.maxTravel = 0;
@@ -84,6 +84,7 @@ export class Octopus {
     }
 
     shoot() {
+        if (!this.active) return;
         const gameContainer = document.querySelector('.game-container');
         const playerContainer = document.querySelector('.player-container');
 
@@ -109,6 +110,7 @@ export class Octopus {
 
         const moveBullet = () => {
             if (!bullet.isConnected || !this.active) {
+                bullet.remove();
                 return;
             }
 
@@ -121,11 +123,17 @@ export class Octopus {
                 return;
             }
 
+            const currentTargets = document.querySelectorAll('.shell');
+            const hitTarget = Array.from(currentTargets).find(target => checkCollision(bullet, target));
+
+            if (hitTarget) {
+                bullet.remove();
+                return;
+            }
+
             const player = document.getElementById('player');
             if (player && checkCollision(bullet, player)) {
                 bullet.remove();
-
-                console.log('Player hit!');
 
                 const gameOverEvent = new CustomEvent('game-over', {
                     detail: { reason: 'player-hit' }
@@ -159,6 +167,11 @@ export class Octopus {
         }
 
         this.updatePosition();
+    }
+
+    stopMovingAndShooting() {
+        this.active = false;
+        this.velocity = 0;
     }
 }
 

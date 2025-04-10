@@ -73,8 +73,8 @@ export class Game {
 
                     octopus.activate(posX, posY);
 
-                    //octopus.velocity = 0.05 + (level * 0.1);
-                    octopus.velocity = 0.0;
+                    octopus.velocity = 0.05 + (level * 0.1);
+                    //octopus.velocity = 0.0;
 
                     octopus.onDestroy = () => {
                         this.activeOctopuses--;
@@ -88,6 +88,18 @@ export class Game {
                     };
 
                     this.activeOctopuses++;
+                }
+            }
+        }
+    }
+
+    gameOver() {
+        const containers = document.querySelectorAll('.invaders-container');
+        for (let i = 0; i < containers.length; i++) {
+            const containerPool = this.octopusPool.pool[i] || [];
+            for (const octopus of containerPool) {
+                if (octopus.active) {
+                    octopus.stopMovingAndShooting();
                 }
             }
         }

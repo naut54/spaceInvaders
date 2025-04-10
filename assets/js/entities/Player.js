@@ -1,5 +1,6 @@
 export class Player {
-    constructor() {
+    constructor(game) {
+        this.game = game;
         this.element = document.getElementById("player");
         this.position = {
             x: 0,
@@ -11,13 +12,33 @@ export class Player {
         this.gameWidth = this.playerContainer.offsetWidth;
         const playerContainerHeight = this.playerContainer.offsetHeight;
         this.position.y = playerContainerHeight -this.element.offsetHeight;
+        document.addEventListener('game-over', this.handleGameOver.bind(this));
 
         this.init();
         this.setupControls();
     }
 
+    handleGameOver(event) {
+        if (event.detail.reason === 'player-hit') {
+            this.destroy();
+        }
+    }
+
+    destroy() {
+        if (this.element) {
+            this.element.remove();
+        }
+
+        this.active = false;
+
+        if (this.game) {
+            this.game.gameOver();
+        }
+    }
+
     init() {
         this.position.x = (this.gameWidth - this.width) / 2;
+        this.active = true;
         this.updatePosition();
     }
 
@@ -53,6 +74,7 @@ export class Player {
     }
 
     shoot() {
+        if (!this.active) return;
         let bullet = document.createElement('div');
         bullet.classList.add('shot');
         bullet.style.width = `10px`;
@@ -88,8 +110,6 @@ export class Player {
 
             if (hitTarget) {
                 bullet.remove();
-                hitTarget.remove();
-                score(2);
                 return;
             }
 
@@ -126,29 +146,32 @@ function checkCollision(elementOne, elementTwo) {
 }
 
 function score(type) {
-    const scoreElement = document.querySelector('#score');
-    const scoreNum = parseInt(scoreElement.innerHTML);
-    switch (type) {
-        case 1:
-            scoreElement.innerHTML = (scoreNum).toString();
-            break;
-        case 2:
-            scoreElement.innerHTML = (scoreNum + 100).toString();
-            break;
-        default:
-            break;
-    }
+    try {
+        const scoreElement = document.getElementById('score');
+        const highScoreElement = document.getElementById('high-score');
 
-    this.scoreElement = document.getElementById('score');
-    this.highScoreElement = document.getElementById('high-score');
+        if (!scoreElement || !highScoreElement) {
+            throw new Error('Elementos de puntuación no encontrados');
+        }
 
-    const highScore = parseInt(this.highScoreElement.textContent);
-    console.log(highScore);
-    const currentScore = parseInt(this.scoreElement.textContent);
-    console.log(currentScore);
+        const currentScore = parseInt(scoreElement.textContent) || 0;
 
-    if (currentScore > highScore || currentScore === 0) {
-        localStorage.setItem('highScore', currentScore.toString())
-        this.highScoreElement.textContent = currentScore.toString();
+        if (type === 2) {
+            const newScore = currentScore + 100;
+            scoreElement.textContent = newScore.toString();
+
+            const highScore = parseInt(highScoreElement.textContent) || 0;
+
+            if (newScore > highScore) {
+                try {
+                    localStorage.setItem('highScore', newScore.toString());
+                    highScoreElement.textContent = newScore.toString();
+                } catch (e) {
+                    console.error('Error al guardar la puntuación más alta:', e);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error en la función score:', error);
     }
 }

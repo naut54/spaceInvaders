@@ -87,7 +87,6 @@ body {
 .invaders-container {
     width: 90%;
     height: 10vh;
-    border: 10px solid #fff;
 }
 
 .fortification-container {
@@ -129,10 +128,11 @@ body {
 .player {
     position: absolute;
     bottom: 0;
+    width: 12%;
 }
 
 .player img {
-    width: 50%;
+    width: 100%;
     height: 100%;
 }
 
